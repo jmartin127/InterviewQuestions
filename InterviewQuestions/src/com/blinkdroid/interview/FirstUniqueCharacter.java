@@ -1,7 +1,12 @@
 package com.blinkdroid.interview;
 
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,10 +25,10 @@ public class FirstUniqueCharacter {
   }
   
   private static void findAndPrintFirstUniqueCharacter(String inputString) {
-    System.out.println("Word: " + inputString + " first unique: " + findFirstUniqueCharacterPerformant(inputString));
+    System.out.println("Word: " + inputString + " first unique: " + findFirstUniqueCharacterPerformantWithLambda(inputString));
   }
 
-  // This is a bit less coding since it uses some built-in functions, but is not as performant O(N^2)
+  // Solution #1: This is a bit less coding since it uses some built-in functions, but is not as performant O(N^2)
   private static Character findFirstUniqueCharacter(String inputString) {
     Set<Character> visitedCharacters = new HashSet<>();
     
@@ -39,7 +44,7 @@ public class FirstUniqueCharacter {
     return null;
   }
 
-  // This is a bit faster since it runs in O(N) time
+  // Solution #2: This is a bit faster since it runs in O(N) time
   private static String findFirstUniqueCharacterPerformant(String inputString) {
     String[] inputCharacters = inputString.split("");
     
@@ -61,6 +66,24 @@ public class FirstUniqueCharacter {
     
     // if not found, then return null
     return null;
+  }
+  
+  // Solution #3: This also runs in O(N) time, but is much more readable, and uses lambdas and the stream API from Java 8
+  //              Also, it is only three lines of code!
+  private static String findFirstUniqueCharacterPerformantWithLambda(String inputString) {
+    final List<String> inputCharacters = Arrays.asList(inputString.split(""));
+    
+    // first, construct a map to count the number of occurrences of each character
+    final Map<Object, Long> characterCounts = inputCharacters
+        .stream()
+        .collect(groupingBy(s -> s, counting()));
+    
+    // then, find the first unique character by consulting the count map
+    return inputCharacters
+        .stream()
+        .filter(s -> characterCounts.get(s) == 1)
+        .findFirst()
+        .orElse(null);
   }
 
 }
